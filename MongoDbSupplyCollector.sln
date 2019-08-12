@@ -1,0 +1,29 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDbSupplyCollector", "MongoDbSupplyCollector\MongoDbSupplyCollector.csproj", "{94A15A6E-2827-45F8-834E-3629FAF2BD42}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDbSupplyCollectorTests", "MongoDbSupplyCollectorTests\MongoDbSupplyCollectorTests.csproj", "{79657691-4038-4223-AAD8-446070CEE870}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDbDataLoader", "MongoDbDataLoader\MongoDbDataLoader.csproj", "{E321FEB0-D279-4848-9934-07CF7C4B6731}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94A15A6E-2827-45F8-834E-3629FAF2BD42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94A15A6E-2827-45F8-834E-3629FAF2BD42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94A15A6E-2827-45F8-834E-3629FAF2BD42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94A15A6E-2827-45F8-834E-3629FAF2BD42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79657691-4038-4223-AAD8-446070CEE870}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79657691-4038-4223-AAD8-446070CEE870}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79657691-4038-4223-AAD8-446070CEE870}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79657691-4038-4223-AAD8-446070CEE870}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E321FEB0-D279-4848-9934-07CF7C4B6731}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E321FEB0-D279-4848-9934-07CF7C4B6731}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E321FEB0-D279-4848-9934-07CF7C4B6731}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E321FEB0-D279-4848-9934-07CF7C4B6731}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

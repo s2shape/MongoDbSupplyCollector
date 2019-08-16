@@ -15,12 +15,12 @@ namespace MongoDbSupplyCollector
 
         public MongoDbSupplyCollector()
         {
-            _connectionStringParts.Add(new ConnectionStringPart("host", true, DataType.text));
-            _connectionStringParts.Add(new ConnectionStringPart("port", false, DataType.number));
-            _connectionStringParts.Add(new ConnectionStringPart("username", false, DataType.text));
-            _connectionStringParts.Add(new ConnectionStringPart("password", true, DataType.password));
-            _connectionStringParts.Add(new ConnectionStringPart("port", false, DataType.number));
-            _connectionStringParts.Add(new ConnectionStringPart("options", false, DataType.text));
+            _connectionStringParts.Add(new ConnectionStringPart("host", true, CnnnectionStringDataType.text));
+            _connectionStringParts.Add(new ConnectionStringPart("port", false, CnnnectionStringDataType.number));
+            _connectionStringParts.Add(new ConnectionStringPart("username", false, CnnnectionStringDataType.text));
+            _connectionStringParts.Add(new ConnectionStringPart("password", true, CnnnectionStringDataType.password));
+            _connectionStringParts.Add(new ConnectionStringPart("port", false, CnnnectionStringDataType.number));
+            _connectionStringParts.Add(new ConnectionStringPart("options", false, CnnnectionStringDataType.text));
         }
 
         public string BuildConnectionString(Dictionary<string, string> connectionStringValues)
@@ -108,11 +108,9 @@ namespace MongoDbSupplyCollector
 
                 var metrics = new DataCollectionMetrics();
                 metrics.Name = collectionName;
-                metrics.RowCounts = collectionStats["count"].AsInt32;
+                metrics.RowCount = collectionStats["count"].AsInt32;
                 metrics.TotalSpaceKB = (collectionStats["storageSize"].AsInt32 + collectionStats["totalIndexSize"].AsInt32) / 1024;
-                metrics.TotalSpaceMB = (decimal)metrics.TotalSpaceKB / 1024;
                 metrics.UsedSpaceKB = metrics.TotalSpaceKB;
-                metrics.UsedSpaceMB = metrics.TotalSpaceMB;
 
                 dataCollectionMetrics.Add(metrics);
             }
@@ -141,7 +139,7 @@ namespace MongoDbSupplyCollector
 
             foreach(string collectionName in collectionNames)
             {
-                DataCollection dataCollection = new DataCollection();
+                DataCollection dataCollection = new DataCollection(container, collectionName);
                 dataCollection.Container = container;
                 dataCollection.Name = collectionName;
 
@@ -159,11 +157,9 @@ namespace MongoDbSupplyCollector
                     {
                         if (propertyName != "_id")
                         {
-                            DataEntity dataEntity = new DataEntity();
-                            dataEntity.Collection = dataCollection;
-                            dataEntity.Container = container;
-                            dataEntity.Name = propertyName;
-                            SetDataTypes(dataEntity, document[propertyName]);
+                            BsonValue bsonValue = document[propertyName];
+                            DataType dataType = GetDataType(bsonValue);
+                            DataEntity dataEntity = new DataEntity(propertyName, dataType, bsonValue.BsonType.ToString(), container, dataCollection);
 
                             entities.Add(dataEntity);
                         }
@@ -175,47 +171,44 @@ namespace MongoDbSupplyCollector
             return (collections, entities);
         }
 
-        private static void SetDataTypes(DataEntity dataEntity, BsonValue bsonValue)
+        private static DataType GetDataType(BsonValue bsonValue)
         {
-            dataEntity.DbDataType = bsonValue.BsonType.ToString();
-
             if (bsonValue.IsBoolean)
             {
-                dataEntity.DataType = "bool";
-                return;
+                return DataType.Boolean;
             }
 
             if (bsonValue.IsGuid)
             {
-                dataEntity.DataType = "uuid";
-                return;
+                return DataType.Guid;
             }
 
             if (bsonValue.IsInt32)
             {
-                dataEntity.DataType = "int";
-                return;
+                return DataType.Int;
             }
 
             if (bsonValue.IsInt64)
             {
-                dataEntity.DataType = "long";
-                return;
+                return DataType.Long;
             }
 
             if (bsonValue.IsString)
             {
-                dataEntity.DataType = "string";
-                return;
+                return DataType.String;
             }
 
             if (bsonValue.IsValidDateTime)
             {
-                dataEntity.DataType = "datetime";
-                return;
+                return DataType.DateTime;
             }
 
-            dataEntity.DataType = bsonValue.BsonType.ToString();
+            if (bsonValue.IsDouble)
+            {
+                return DataType.Double;
+            }
+
+            return DataType.Unknown;
         }
 
         public bool IsValidConnectionString(Dictionary<string, string> connectionStringValues)

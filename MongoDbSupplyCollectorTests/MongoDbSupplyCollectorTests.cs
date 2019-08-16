@@ -25,15 +25,9 @@ namespace MongoSupplyCollectorTests
                 ConnectionString = _instance.BuildConnectionString(connectionStringValues)
             };
 
-            _emailToAddress = new DataEntity()
-            {
-                Container = _container,
-                Collection = new DataCollection()
-                {
-                    Name = "email"
-                },
-                Name = "TO_ADDRS_EMAILS"
-            };
+            DataCollection dataCollection = new DataCollection(_container, "email");
+
+            _emailToAddress = new DataEntity("TO_ADDRS_EMAILS", DataType.String, "string", _container, dataCollection);
         }
 
         [Fact]
@@ -58,8 +52,7 @@ namespace MongoSupplyCollectorTests
             Assert.Equal(156, elements.Count);
             foreach(DataEntity element in elements)
             {
-                Assert.NotEmpty(element.DataType);
-                Assert.NotEmpty(element.DbDataType);
+                Assert.NotEqual(string.Empty, element.DbDataType);
             }
         }
 
@@ -81,17 +74,14 @@ namespace MongoSupplyCollectorTests
 
             Assert.Equal(3, result.Count);
 
-            Assert.Equal(200, contactsAuditMetrics.RowCounts);
+            Assert.Equal(200, contactsAuditMetrics.RowCount);
             Assert.Equal(116, contactsAuditMetrics.TotalSpaceKB);
-            Assert.Equal(.1M, contactsAuditMetrics.TotalSpaceMB, 1);
 
-            Assert.Equal(200, leadsMetrics.RowCounts);
+            Assert.Equal(200, leadsMetrics.RowCount);
             Assert.Equal(112, leadsMetrics.TotalSpaceKB);
-            Assert.Equal(.1M, leadsMetrics.TotalSpaceMB, 1);
 
-            Assert.Equal(200, emailMetrics.RowCounts);
+            Assert.Equal(200, emailMetrics.RowCount);
             Assert.Equal(84, emailMetrics.TotalSpaceKB);
-            Assert.Equal(.1M, emailMetrics.TotalSpaceMB, 1);
 
         }
 

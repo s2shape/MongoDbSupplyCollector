@@ -5,9 +5,9 @@ namespace MongoDbSupplyCollector
     {
         public string Name { get; private set; }
         public bool Required { get; private set; }
-        public DataType DataType { get; private set; }
+        public CnnnectionStringDataType DataType { get; private set; }
 
-        public ConnectionStringPart(string name, bool required, DataType dataType)
+        public ConnectionStringPart(string name, bool required, CnnnectionStringDataType dataType)
         {
             Name = name;
             Required = required;
@@ -15,7 +15,7 @@ namespace MongoDbSupplyCollector
         }
     }
 
-   public enum DataType
+   public enum CnnnectionStringDataType
     {
         text,
         password,

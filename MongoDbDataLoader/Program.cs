@@ -23,6 +23,8 @@ namespace MongoDbDataLoader
 
             List<Lead> leads = LoadFile<Lead>("./SampleData/LEADS.CSV");
             LoadData<Lead>(database, "lead", leads);
+
+            LoadData<Person>(database, "person", GeneratePeople());
         }
 
         private static void LoadData<T>(IMongoDatabase database, string collectionName, List<T> data)
@@ -53,6 +55,19 @@ namespace MongoDbDataLoader
             }
 
             return records;
+        }
+
+        private static List<Person> GeneratePeople()
+        {
+            var list = new List<Person>(200);
+
+            for (int i = 0; i < 200; i++)
+            {
+                var person = new Person(i, 2, 3);
+                list.Add(person);
+            }
+
+            return list;
         }
     }
 }

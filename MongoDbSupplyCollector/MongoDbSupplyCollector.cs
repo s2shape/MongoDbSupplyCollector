@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using S2.BlackSwan.SupplyCollector;
@@ -126,6 +127,75 @@ namespace MongoDbSupplyCollector
             return databaseName;
         }
 
+        private DataEntity GetDataEntity(BsonValue bsonValue, string propertyName, string parentProperty, DataCollection dataCollection, DataContainer container)
+        {
+            DataType dataType = GetDataType(bsonValue);
+
+            string name = propertyName;
+
+            if (!string.IsNullOrWhiteSpace(parentProperty))
+            {
+                name = parentProperty + "." + propertyName;
+            }
+            DataEntity dataEntity = new DataEntity(name, dataType, bsonValue.BsonType.ToString(), container, dataCollection);
+
+            return dataEntity;
+        }
+
+        private List<DataEntity> GetDataEntitiesFromArray(BsonArray bsonArray, string propertyName, string parentProperty, DataCollection dataCollection, DataContainer container)
+        {
+            var entities = new List<DataEntity>();
+
+            if (bsonArray.Count > 0)
+            {
+                var bsonValue = bsonArray[0];
+
+                AddEntityAndChildren(bsonValue, propertyName, parentProperty, dataCollection, container, entities);
+
+            }
+
+            return entities;
+        }
+
+        private List<DataEntity> GetDataEntitiesFromDocument(BsonDocument bsonDocument, string parentProperty, DataCollection dataCollection, DataContainer container)
+        {
+            var entities = new List<DataEntity>();
+
+            foreach (var propertyName in bsonDocument.Names)
+            {
+                if (propertyName != "_id")
+                {
+                    BsonValue bsonValue = bsonDocument[propertyName];
+                    AddEntityAndChildren(bsonValue, propertyName, parentProperty, dataCollection, container, entities);
+
+                }
+            }
+
+            return entities;
+        }
+
+        private void AddEntityAndChildren(BsonValue bsonValue, string propertyName, string parentProperty, DataCollection dataCollection, DataContainer container, List<DataEntity> entities)
+        { 
+            switch (bsonValue.BsonType)
+            {
+                case BsonType.Array:
+                    entities.AddRange(GetDataEntitiesFromArray(bsonValue.AsBsonArray, propertyName, parentProperty, dataCollection, container));
+                    break;
+                case BsonType.Document:
+                    if (!string.IsNullOrWhiteSpace(parentProperty))
+                    {
+                        propertyName = parentProperty + "." + propertyName;
+                    }
+                    entities.AddRange(GetDataEntitiesFromDocument(bsonValue.AsBsonDocument, propertyName, dataCollection, container));
+                    break;
+                default:
+                    DataEntity dataEntity = GetDataEntity(bsonValue, propertyName, parentProperty, dataCollection, container);
+                    entities.Add(dataEntity);
+                    break;
+
+            }
+        }
+
         public override (List<DataCollection>, List<DataEntity>) GetSchema(DataContainer container)
         {
             var collections = new List<DataCollection>();
@@ -139,6 +209,8 @@ namespace MongoDbSupplyCollector
 
             foreach(string collectionName in collectionNames)
             {
+                var collectionEntities = new List<DataEntity>();
+
                 DataCollection dataCollection = new DataCollection(container, collectionName);
                 dataCollection.Container = container;
                 dataCollection.Name = collectionName;
@@ -147,25 +219,21 @@ namespace MongoDbSupplyCollector
 
                 var mongoCollection = database.GetCollection<BsonDocument>(collectionName);
 
-                var documents = mongoCollection.Find<BsonDocument>(_emptyFilter).Limit(1).ToList();
+                var documents = mongoCollection.Find<BsonDocument>(_emptyFilter).Limit(10).ToList();
 
-                if (documents.Count > 0)
+                int schemaSampleSize = 10;
+                int sample = 0;
+
+                while (sample < documents.Count && sample < schemaSampleSize)
                 {
-                    BsonDocument document = documents[0];
+                    BsonDocument document = documents[sample];
 
-                    foreach(var propertyName in document.Names)
-                    {
-                        if (propertyName != "_id")
-                        {
-                            BsonValue bsonValue = document[propertyName];
-                            DataType dataType = GetDataType(bsonValue);
-                            DataEntity dataEntity = new DataEntity(propertyName, dataType, bsonValue.BsonType.ToString(), container, dataCollection);
+                    collectionEntities.AddRange(GetDataEntitiesFromDocument(document, null, dataCollection, container));
 
-                            entities.Add(dataEntity);
-                        }
-                    }
+                    sample++;
                 }
-                
+
+                entities.AddRange(collectionEntities.DistinctBy(e => e.Name).ToList());
             }
 
             return (collections, entities);
@@ -241,4 +309,21 @@ namespace MongoDbSupplyCollector
             return dbList.Any();
         }
     }
+
+    public static class LinqExtensions
+    {
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>
+            (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            HashSet<TKey> seenKeys = new HashSet<TKey>();
+            foreach (TSource element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
+        }
+    }
+
 }

@@ -48,8 +48,8 @@ namespace MongoSupplyCollectorTests
         public void GetSchemaTest()
         {
             var (tables, elements) = _instance.GetSchema(_container);
-            Assert.Equal(3, tables.Count);
-            Assert.Equal(156, elements.Count);
+            Assert.Equal(4, tables.Count);
+            Assert.Equal(171, elements.Count);
             foreach(DataEntity element in elements)
             {
                 Assert.NotEqual(string.Empty, element.DbDataType);
@@ -71,8 +71,9 @@ namespace MongoSupplyCollectorTests
             var contactsAuditMetrics = result.Find(x => x.Name == "contacts_audit");
             var leadsMetrics = result.Find(x => x.Name == "lead");
             var emailMetrics = result.Find(x => x.Name == "email");
+            var personMetrics = result.Find(x => x.Name == "person");
 
-            Assert.Equal(3, result.Count);
+            Assert.Equal(4, result.Count);
 
             Assert.Equal(200, contactsAuditMetrics.RowCount);
             Assert.Equal(116, contactsAuditMetrics.TotalSpaceKB);

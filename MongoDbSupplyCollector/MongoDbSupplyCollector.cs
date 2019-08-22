@@ -66,13 +66,23 @@ namespace MongoDbSupplyCollector
 
             var mongoCollection = database.GetCollection<BsonDocument>(collectionName);
 
-            var documents = mongoCollection.Find<BsonDocument>(_emptyFilter).Limit(sampleSize).ToList();
+            var field = "{'_id': 0, '" + dataEntity.Name + "': 1}";
+
+            var documents = mongoCollection.Find<BsonDocument>(_emptyFilter).Project<BsonDocument>(field).Limit(sampleSize).ToList();
 
             var samples = new List<string>();
 
+            string[] nameParts = dataEntity.Name.Split(".");
+
             foreach(BsonDocument document in documents)
             {
-                string sample = document[dataEntity.Name].AsString;
+                BsonValue value = document;
+
+                foreach (var namePart in nameParts)
+                {
+                    value = value[namePart];
+                }
+                string sample = value.AsString;
                 samples.Add(sample);
             }
 

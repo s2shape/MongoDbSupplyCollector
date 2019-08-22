@@ -10,6 +10,7 @@ namespace MongoSupplyCollectorTests
         public readonly MongoDbSupplyCollector.MongoDbSupplyCollector _instance;
         public readonly DataContainer _container;
         public readonly DataEntity _emailToAddress;
+        public readonly DataEntity _homeStreet1;
 
         public MongoSupplyCollectorTests()
         {
@@ -25,9 +26,13 @@ namespace MongoSupplyCollectorTests
                 ConnectionString = _instance.BuildConnectionString(connectionStringValues)
             };
 
-            DataCollection dataCollection = new DataCollection(_container, "email");
+            DataCollection emailCollection = new DataCollection(_container, "email");
 
-            _emailToAddress = new DataEntity("TO_ADDRS_EMAILS", DataType.String, "string", _container, dataCollection);
+            _emailToAddress = new DataEntity("TO_ADDRS_EMAILS", DataType.String, "string", _container, emailCollection);
+
+            DataCollection personCollection = new DataCollection(_container, "person");
+
+            _homeStreet1 = new DataEntity("Addresses.type0.Street1", DataType.String, "string", _container, personCollection);
         }
 
         [Fact]
@@ -62,6 +67,14 @@ namespace MongoSupplyCollectorTests
             var samples = _instance.CollectSample(_emailToAddress, 161);
             Assert.Equal(161, samples.Count);
             Assert.Contains("qa25@example.com", samples);
+        }
+
+        [Fact]
+        public void CollectNestedDataSampleTest()
+        {
+            var samples = _instance.CollectSample(_homeStreet1, 127);
+            Assert.Equal(127, samples.Count);
+            Assert.Contains("Street10", samples);
         }
 
         [Fact]

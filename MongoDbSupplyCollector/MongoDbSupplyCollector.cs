@@ -55,6 +55,40 @@ namespace MongoDbSupplyCollector
             return connectionString;
         }
 
+        private void AddSamples(List<string> samples, BsonValue value, string propertyName)
+        {
+            string[] nameParts = propertyName.Split(".");
+
+            string subProperty = propertyName;
+
+            string currentProperty = nameParts[0];
+
+            if (nameParts.Length > 1)
+            {
+                subProperty = string.Join(".", nameParts, 1, nameParts.Length - 1);
+            }
+
+            if (value.IsBsonDocument)
+            {
+                value = value[currentProperty];
+                AddSamples(samples, value, subProperty);
+            }
+            else
+            {
+                if (value.IsBsonArray)
+                {
+                    for (int i = 0; i < value.AsBsonArray.Count; i++)
+                    {
+                        AddSamples(samples, value[i], subProperty);
+                    }
+                }
+                else
+                {
+                    samples.Add(value.AsString);
+                }
+            }
+        }
+
         public override List<string> CollectSample(DataEntity dataEntity, int sampleSize)
         {
             DataContainer container = dataEntity.Container;
@@ -72,21 +106,14 @@ namespace MongoDbSupplyCollector
 
             var samples = new List<string>();
 
-            string[] nameParts = dataEntity.Name.Split(".");
-
             foreach(BsonDocument document in documents)
             {
                 BsonValue value = document;
 
-                foreach (var namePart in nameParts)
-                {
-                    value = value[namePart];
-                }
-                string sample = value.AsString;
-                samples.Add(sample);
+                AddSamples(samples, value, dataEntity.Name);
             }
 
-            return samples;
+            return samples.Take(sampleSize).ToList();
             
         }
 

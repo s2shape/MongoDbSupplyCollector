@@ -10,7 +10,8 @@ namespace MongoSupplyCollectorTests
         public readonly MongoDbSupplyCollector.MongoDbSupplyCollector _instance;
         public readonly DataContainer _container;
         public readonly DataEntity _emailToAddress;
-        public readonly DataEntity _homeStreet1;
+        public readonly DataEntity _type0Street1;
+        public readonly DataEntity _phoneNumbersType;
 
         public MongoSupplyCollectorTests()
         {
@@ -32,7 +33,8 @@ namespace MongoSupplyCollectorTests
 
             DataCollection personCollection = new DataCollection(_container, "person");
 
-            _homeStreet1 = new DataEntity("Addresses.type0.Street1", DataType.String, "string", _container, personCollection);
+            _type0Street1 = new DataEntity("Addresses.type0.Street1", DataType.String, "string", _container, personCollection);
+            _phoneNumbersType = new DataEntity("PhoneNumbers.Type", DataType.String, "string", _container, personCollection);
         }
 
         [Fact]
@@ -70,11 +72,19 @@ namespace MongoSupplyCollectorTests
         }
 
         [Fact]
-        public void CollectNestedDataSampleTest()
+        public void CollectNestedStreetDataSampleTest()
         {
-            var samples = _instance.CollectSample(_homeStreet1, 127);
+            var samples = _instance.CollectSample(_type0Street1, 127);
             Assert.Equal(127, samples.Count);
             Assert.Contains("Street10", samples);
+        }
+
+        [Fact]
+        public void CollectNestedPhoneTypeDataSampleTest()
+        {
+            var samples = _instance.CollectSample(_phoneNumbersType, 178);
+            Assert.Equal(178, samples.Count);
+            Assert.Contains("Type0", samples);
         }
 
         [Fact]

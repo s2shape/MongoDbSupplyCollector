@@ -74,8 +74,8 @@ namespace MongoSupplyCollectorTests
         [Fact]
         public void CollectNestedStreetDataSampleTest()
         {
-            var samples = _instance.CollectSample(_type0Street1, 127);
-            Assert.Equal(127, samples.Count);
+            var samples = _instance.CollectSample(_type0Street1, 201);
+            Assert.Equal(200, samples.Count);
             Assert.Contains("Street10", samples);
         }
 

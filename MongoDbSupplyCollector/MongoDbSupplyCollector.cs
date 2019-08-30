@@ -70,8 +70,11 @@ namespace MongoDbSupplyCollector
 
             if (value.IsBsonDocument)
             {
-                value = value[currentProperty];
-                AddSamples(samples, value, subProperty);
+                if (value.ToBsonDocument().Contains(currentProperty))
+                {
+                    value = value[currentProperty];
+                    AddSamples(samples, value, subProperty);
+                }               
             }
             else
             {

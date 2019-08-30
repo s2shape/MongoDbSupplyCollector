@@ -61,6 +61,11 @@ namespace MongoDbDataLoader
         {
             var list = new List<Person>(200);
 
+            var noType0 = new Person(1000000, 10, 10);
+            noType0.Addresses["type0"] = null;
+
+            list.Add(noType0);
+
             for (int i = 0; i < 200; i++)
             {
                 var person = new Person(i, 2, 3);

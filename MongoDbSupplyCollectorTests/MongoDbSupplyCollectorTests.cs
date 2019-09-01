@@ -55,8 +55,9 @@ namespace MongoSupplyCollectorTests
         public void GetSchemaTest()
         {
             var (tables, elements) = _instance.GetSchema(_container);
+
             Assert.Equal(4, tables.Count);
-            Assert.Equal(171, elements.Count);
+            Assert.Equal(212, elements.Count);
             foreach(DataEntity element in elements)
             {
                 Assert.NotEqual(string.Empty, element.DbDataType);
@@ -74,8 +75,8 @@ namespace MongoSupplyCollectorTests
         [Fact]
         public void CollectNestedStreetDataSampleTest()
         {
-            var samples = _instance.CollectSample(_type0Street1, 127);
-            Assert.Equal(127, samples.Count);
+            var samples = _instance.CollectSample(_type0Street1, 201);
+            Assert.Equal(200, samples.Count);
             Assert.Contains("Street10", samples);
         }
 
@@ -99,13 +100,13 @@ namespace MongoSupplyCollectorTests
             Assert.Equal(4, result.Count);
 
             Assert.Equal(200, contactsAuditMetrics.RowCount);
-            Assert.Equal(116, contactsAuditMetrics.TotalSpaceKB);
+            Assert.Equal(104, contactsAuditMetrics.TotalSpaceKB);
 
             Assert.Equal(200, leadsMetrics.RowCount);
-            Assert.Equal(112, leadsMetrics.TotalSpaceKB);
+            Assert.Equal(92, leadsMetrics.TotalSpaceKB);
 
             Assert.Equal(200, emailMetrics.RowCount);
-            Assert.Equal(84, emailMetrics.TotalSpaceKB);
+            Assert.Equal(72, emailMetrics.TotalSpaceKB);
 
         }
 

@@ -67,8 +67,10 @@ namespace MongoSupplyCollectorTests
         [Fact]
         public void CollectSampleTest()
         {
-            var samples = _instance.CollectSample(_emailToAddress, 161);
-            Assert.Equal(161, samples.Count);
+            var samples = _instance.CollectSample(_emailToAddress, 4);
+            Assert.Equal(4, samples.Count);
+            samples = _instance.CollectSample(_emailToAddress, 200);
+            Assert.Equal(200, samples.Count);
             Assert.Contains("qa25@example.com", samples);
         }
 

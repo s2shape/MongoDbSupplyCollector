@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using S2.BlackSwan.SupplyCollector;
 using S2.BlackSwan.SupplyCollector.Models;
 
@@ -102,14 +103,16 @@ namespace MongoDbSupplyCollector
             string collectionName = dataEntity.Collection.Name;
 
             var mongoCollection = database.GetCollection<BsonDocument>(collectionName);
+            var docs = mongoCollection.AsQueryable().Sample(sampleSize);
 
-            var field = "{'_id': 0, '" + dataEntity.Name + "': 1}";
+            /*var field = "{'_id': 0, '" + dataEntity.Name + "': 1}";
 
             var documents = mongoCollection.Find<BsonDocument>(_emptyFilter).Project<BsonDocument>(field).Limit(sampleSize).ToList();
+            */
 
             var samples = new List<string>();
 
-            foreach(BsonDocument document in documents)
+            foreach(BsonDocument document in docs)
             {
                 BsonValue value = document;
 

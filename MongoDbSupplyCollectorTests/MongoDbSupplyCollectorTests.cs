@@ -102,13 +102,13 @@ namespace MongoSupplyCollectorTests
             Assert.Equal(4, result.Count);
 
             Assert.Equal(200, contactsAuditMetrics.RowCount);
-            Assert.Equal(104, contactsAuditMetrics.TotalSpaceKB);
+            Assert.Equal(8, contactsAuditMetrics.TotalSpaceKB);
 
             Assert.Equal(200, leadsMetrics.RowCount);
-            Assert.Equal(92, leadsMetrics.TotalSpaceKB);
+            Assert.Equal(8, leadsMetrics.TotalSpaceKB);
 
             Assert.Equal(200, emailMetrics.RowCount);
-            Assert.Equal(72, emailMetrics.TotalSpaceKB);
+            Assert.Equal(8, emailMetrics.TotalSpaceKB);
 
         }
 

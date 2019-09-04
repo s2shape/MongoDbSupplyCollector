@@ -27,7 +27,7 @@ namespace MongoDbSupplyCollector
 
         public string BuildConnectionString(Dictionary<string, string> connectionStringValues)
         {
-            string connectionString = "mongodb://";
+            var connectionString = "mongodb://";
 
             if (connectionStringValues.ContainsKey("username") && connectionStringValues.ContainsKey("password"))
             {
@@ -145,15 +145,13 @@ namespace MongoDbSupplyCollector
 
             foreach (string collectionName in collectionNames)
             {
-                var mongoCollection = database.GetCollection<BsonDocument>(collectionName);
-
                 var command = new BsonDocument { { "collStats", collectionName }, { "scale", 1 } };
                 var collectionStats = database.RunCommand<BsonDocument>(command);
 
                 var metrics = new DataCollectionMetrics();
                 metrics.Name = collectionName;
                 metrics.RowCount = collectionStats["count"].AsInt32;
-                metrics.TotalSpaceKB = (collectionStats["storageSize"].AsInt32 + collectionStats["totalIndexSize"].AsInt32) / 1024;
+                metrics.TotalSpaceKB = (collectionStats["storageSize"].AsInt32 + collectionStats["totalIndexSize"].AsInt32) / 1024.0M;
                 metrics.UsedSpaceKB = metrics.TotalSpaceKB;
 
                 dataCollectionMetrics.Add(metrics);
@@ -262,7 +260,7 @@ namespace MongoDbSupplyCollector
 
                 var mongoCollection = database.GetCollection<BsonDocument>(collectionName);
 
-                var documents = mongoCollection.Find<BsonDocument>(_emptyFilter).Limit(10).ToList();
+                var documents = mongoCollection.Find(_emptyFilter).Limit(10).ToList();
 
                 int schemaSampleSize = 10;
                 int sample = 0;
@@ -324,12 +322,7 @@ namespace MongoDbSupplyCollector
 
         public bool IsValidConnectionString(Dictionary<string, string> connectionStringValues)
         {
-            bool isValid = false;
-
-            if (connectionStringValues.ContainsKey("host"))
-            {
-                isValid = true;
-            }
+            bool isValid = connectionStringValues.ContainsKey("host");
 
             if (connectionStringValues.ContainsKey("username") && !connectionStringValues.ContainsKey("password"))
             {

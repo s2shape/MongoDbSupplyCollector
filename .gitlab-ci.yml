@@ -7,6 +7,9 @@ stages:
 services:
   - mongo
 
+variables:
+  MONGO_HOST: mongo
+
 before_script:
   - dotnet restore
 

@@ -17,7 +17,7 @@ namespace MongoSupplyCollectorTests
         {
             _instance = new MongoDbSupplyCollector.MongoDbSupplyCollector();
             var connectionStringValues = new Dictionary<string, string>();
-            connectionStringValues["host"] = "localhost";
+            connectionStringValues["host"] = Environment.GetEnvironmentVariable("MONGO_HOST");
             connectionStringValues["port"] = "27017";
             connectionStringValues["database"] = "s2";
             connectionStringValues["options"] = "connectTimeoutMS=3000";

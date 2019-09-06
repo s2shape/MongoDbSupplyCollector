@@ -17,9 +17,10 @@ build:
   stage: build
   script:
     - dotnet build
-    - cd MongoDbDataLoader && dotnet run
 
 test:
   stage: test
   script:
+    - dotnet build
+    - cd MongoDbDataLoader && dotnet run
     - dotnet test

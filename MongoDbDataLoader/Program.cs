@@ -9,9 +9,9 @@ namespace MongoDbDataLoader
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-            var client = new MongoClient("mongodb://localhost");
+        static void Main(string[] args) {
+            var host = Environment.GetEnvironmentVariable("MONGO_HOST");
+            var client = new MongoClient($"mongodb://{host}");
             var database = client.GetDatabase("s2");
 
             List<ContactsAudit> contactsAudits = LoadFile<ContactsAudit>("./SampleData/CONTACTS_AUDIT.CSV");

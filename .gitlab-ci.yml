@@ -1,4 +1,4 @@
-image: microsoft/dotnet:latest
+image: itsplus/s2shape-test-harness
 
 stages:
   - build
@@ -24,3 +24,5 @@ test:
     - dotnet build
     - cd MongoDbDataLoader && dotnet run
     - dotnet test
+    - cd MongoDbSupplyCollectorTests/bin/Debug/netcoreapp2.2/
+    - SupplyCollectorTestHarness

@@ -22,7 +22,9 @@ test:
   stage: test
   script:
     - dotnet build
-    - cd MongoDbDataLoader && dotnet run
+    - cd MongoDbDataLoader
+    - dotnet run
+    - cd ..
     - dotnet test
     - cd MongoDbSupplyCollectorTests/bin/Debug/netcoreapp2.2/
     - SupplyCollectorTestHarness

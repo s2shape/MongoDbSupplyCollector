@@ -161,7 +161,7 @@ namespace MongoDbSupplyCollector
             return dataCollectionMetrics;
         }
 
-        private static string GetDatabaseNameFromConnectionString(string connectionString)
+        public static string GetDatabaseNameFromConnectionString(string connectionString)
         {
             string[] connectionStringElements = connectionString.Split("/");
             string databaseName = connectionStringElements[3].Split("?")[0];

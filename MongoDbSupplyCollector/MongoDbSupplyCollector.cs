@@ -89,7 +89,7 @@ namespace MongoDbSupplyCollector
                 else
                 {
                     if(!(value is BsonNull))
-                        samples.Add(value.AsString);
+                        samples.Add(value.ToString());
                 }
             }
         }

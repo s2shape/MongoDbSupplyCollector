@@ -104,7 +104,7 @@ namespace MongoDbSupplyCollector
             string collectionName = dataEntity.Collection.Name;
 
             var mongoCollection = database.GetCollection<BsonDocument>(collectionName);
-            var docs = mongoCollection.AsQueryable().Sample(sampleSize);
+            var docs = mongoCollection.AsQueryable(new AggregateOptions() {AllowDiskUse = true}).Sample(sampleSize);
 
             /*var field = "{'_id': 0, '" + dataEntity.Name + "': 1}";
 
